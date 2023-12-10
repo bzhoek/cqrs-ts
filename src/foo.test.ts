@@ -1,27 +1,24 @@
 import "reflect-metadata";
+import {Aggregate, Command, DomainEvent, Fixture} from './cqrs'
 import {sum} from './foo';
 
 // COMMANDS
-
-interface Command {
+class CreateTodo implements Command {
 }
 
-class CreateTodo implements Command {}
-
-class ModifyTodo implements Command {}
+class ModifyTodo implements Command {
+}
 
 // EVENTS
-
-interface DomainEvent {
-}
-
 class TodoCreated implements DomainEvent {
-  constructor(public id: number, public title: string) {}
+  constructor(public id: number, public title: string) {
+  }
 
 }
 
 class TodoCompleted implements DomainEvent {
-  constructor(public id: number) {}
+  constructor(public id: number) {
+  }
 }
 
 // ROOT
@@ -63,36 +60,20 @@ test('type', () => {
   expect(new TodoCompleted(1).constructor.name).toBe("TodoCompleted")
 });
 
-class Fixture {
-  private emitted: DomainEvent[] = []
-
-  public given(e: DomainEvent) {
-    return this;
-  }
-
-  when(command: Command) {
-    return this;
-  }
-
-  then(event: DomainEvent) {
-    expect(this.emitted.length).toBe(1);
-    expect(this.emitted[0].constructor.name).toBe(event.constructor.name);
-    return this;
-  }
-}
 
 function fixture() {
   return new Fixture();
 }
 
 class CompleteTodo implements Command {
-  constructor(id: number) {}
+  constructor(id: number) {
+  }
 }
 
 test("todo is completed", () => {
   let id = 1;
   fixture()
-    .given(new TodoCreated(id, "sample"))
-    .when(new CompleteTodo(id))
-    .then(new TodoCompleted(id))
+      .given(new TodoCreated(id, "sample"))
+      .when(new CompleteTodo(id))
+      .then(new TodoCompleted(id))
 });
